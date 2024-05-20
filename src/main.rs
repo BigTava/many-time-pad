@@ -1,11 +1,10 @@
 use std::fmt::Write;
 use std::str;
+use hex::decode;
 
+mod constants;
 fn hex_to_bytes(hex: &str) -> Vec<u8> {
-    (0..hex.len())
-        .step_by(2)
-        .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
-        .collect()
+    decode(hex).expect("Invalid hex string")
 }
 
 fn xor_bytes(bytes1: &[u8], bytes2: &[u8]) -> Vec<u8> {
@@ -29,14 +28,12 @@ fn decrypt_with_key(ciphertexts: &[Vec<u8>], key: &[u8]) -> Vec<String> {
         .iter()
         .map(|ct| {
             let plaintext_bytes: Vec<u8> = xor_bytes(ct, key);
-            str::from_utf8(&plaintext_bytes)
-                .unwrap_or("[invalid UTF-8]")
-                .to_string()
+            str::from_utf8(&plaintext_bytes).unwrap_or("[invalid UTF-8]").to_string()
         })
         .collect()
 }
 
-fn main() {
+fn xor_all_lines() {
     // Example hex-encoded ciphertexts
     let line_1 =
         "160111433b00035f536110435a380402561240555c526e1c0e431300091e4f04451d1d490d1c49010d000a0a4510111100000d434202081f0755034f13031600030d0204040e";
@@ -54,9 +51,7 @@ fn main() {
         "011b0d131b060d4f5233451e161b001f59411c090a0548104f431f0b48115505111d17000e02000a1e430d0d0b04115e4f190017480c14074855040a071f4448001a050110001b014c1a07024e5014094d0a1c541052110e54074541100601014e101a5c";
     let line_8 = "0c06004316061b48002a4509065e45221654501c0a075f540c42190b165c";
 
-    let ciphertexts_hex = vec![
-        line_1, line_2, line_3, line_4, line_5, line_6, line_7, line_8,
-    ];
+    let ciphertexts_hex = vec![line_1, line_2, line_3, line_4, line_5, line_6, line_7, line_8];
 
     for i in 0..ciphertexts_hex.len() {
         for j in i + 1..ciphertexts_hex.len() {
@@ -64,50 +59,23 @@ fn main() {
             let bytes_j = hex_to_bytes(ciphertexts_hex[j]);
 
             let xor_result = xor_bytes(&bytes_i, &bytes_j);
-            println!(
-                "XOR result between line {i} and line {j}: {}",
-                bytes_to_hex(&xor_result)
-            );
+            println!("XOR result between line {i} and line {j}: {}", bytes_to_hex(&xor_result));
         }
     }
+}
 
-    let common_4_letter_words: Vec<&str> = vec![
-        "that​", "this​", "with​", "from​", "your​", "have​", "more​", "will​", "home​", "page​", "free​",
-        "time​", "they​", "site​", "what​", "news​", "only​", "when​", "here​", "also​", "help", "view",
-        "been", "were", "some", "like", "than", "find", "date", "back", "list", "name", "just",
-        "over", "year", "into", "next", "used", "work", "last", "most", "data", "make", "them",
-        "post", "city", "such", "best", "then", "good", "well", "info", "high", "each", "very",
-        "book", "read", "need", "many", "user", "said", "does", "mail", "full", "life", "know",
-        "days", "part", "real", "item", "must", "made", "line", "send", "type", "take", "area",
-        "want", "long", "code", "show", "even", "much", "sign", "file", "link", "open", "case",
-        "same", "both", "game", "care", "down", "size", "shop", "text", "rate", "form", "love",
-        "john", "main", "call", "save", "york", "card", "jobs", "food", "sale", "teen", "room",
-        "join", "west", "look", "left", "team", "week", "note", "live", "plan", "cost", "test",
-        "come", "cart", "play", "less", "blog", "park", "side", "give", "sell", "body", "east",
-        "club", "road", "gift", "hard", "four", "blue", "easy", "star", "hand", "keep", "porn",
-        "baby", "term", "film", "head", "cell", "self", "away", "once", "sure", "cars", "tell",
-        "able", "gold", "arts", "past", "five", "upon", "says", "land", "done", "ever", "word",
-        "bill", "talk", "nude", "kids", "true", "else", "mark", "rock", "tips", "plus", "auto",
-        "edit", "fast", "fact", "unit", "tech", "meet", "feel", "bank", "risk", "town", "girl",
-        "toys", "golf", "loan", "wide", "sort", "half", "step", "none", "paul", "lake", "fire",
-        "chat", "loss", "face", "base", "near", "stay", "turn", "mean", "king", "copy", "drug",
-        "pics", "cash", "seen", "port", "stop", "soon", "held", "mind", "lost", "tour", "menu",
-        "hope", "wish", "role", "came", "fine", "hour", "bush", "huge", "kind", "move", "logo",
-        "nice", "sent", "band", "lead", "went", "mode", "fund", "male", "took", "song", "late",
-        "fall", "idea", "tool", "hill", "maps", "deal", "hold", "safe", "feed", "hall", "anti",
-        "ship", "paid", "hair", "anal", "tree", "thus", "wall",
-    ];
-
+fn check_word() {
     let given_hex = "0e43";
     let bytes_given = hex_to_bytes(given_hex);
 
-    for word in common_4_letter_words {
+    for word in constants::common_4_letter_words() {
         println!("{}", word);
-        let bytes_word = hex_to_bytes(&word);
+        let bytes_word: Vec<u8> = word.bytes().take(bytes_given.len()).collect();
         let xor_result = xor_bytes(&bytes_word, &bytes_given);
-        println!(
-            "XOR result between {word} and {given_hex}: {}",
-            bytes_to_hex(&xor_result)
-        );
+        println!("XOR result between {word} and {given_hex}: {}", bytes_to_hex(&xor_result));
     }
+}
+
+fn main() {
+    check_word();
 }
