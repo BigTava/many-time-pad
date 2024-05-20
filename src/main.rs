@@ -36,8 +36,8 @@ fn decrypt_with_key(ciphertexts: &[Vec<u8>], key: &[u8]) -> Vec<String> {
 
 fn main() {
     // Example hex-encoded ciphertexts
-    let line_1 = "151b45533b0a0400075910514a290e034a41105d56522648";
-    "160111433b00035f536110435a380402561240555c526e1c0e431300091e4f04451d1d490d1c49010d000a0a4510111100000d434202081f0755034f13031600030d0204040e";
+    let line_1 =
+        "160111433b00035f536110435a380402561240555c526e1c0e431300091e4f04451d1d490d1c49010d000a0a4510111100000d434202081f0755034f13031600030d0204040e";
     let line_2 =
         "050602061d07035f4e3553501400004c1e4f1f01451359540c5804110c1c47560a1415491b06454f0e45040816431b144f0f4900450d1501094c1b16550f0b4e151e03031b450b4e020c1a124f020a0a4d09071f16003a0e5011114501494e16551049021011114c291236520108541801174b03411e1d124554284e141a0a1804045241190d543c00075453020a044e134f540a174f1d080444084e01491a090b0a1b4103570740";
     let line_3 =
@@ -61,16 +61,10 @@ fn main() {
 
             let xor_result = xor_bytes(&bytes_i, &bytes_j);
             println!("XOR result between line {i} and line {j}: {}", bytes_to_hex(&xor_result));
-
-            // list of 50 most frequest 4 letter word in english
-            // the hex of each word
-            // compare with given hex
-            // if result is all 0s
         }
     }
 
     let common_4_letter_words: Vec<&str> = vec![
-        "that",
         "with",
         "have",
         "this",
@@ -82,10 +76,11 @@ fn main() {
         "what"
     ];
 
-    let given_hex = "035f";
+    let given_hex = "0e43";
     let bytes_given = hex_to_bytes(given_hex);
 
     for word in common_4_letter_words {
+        println!("{}", word);
         let bytes_word = hex_to_bytes(&word);
         let xor_result = xor_bytes(&bytes_word, &bytes_given);
         println!("XOR result between {word} and {given_hex}: {}", bytes_to_hex(&xor_result));
