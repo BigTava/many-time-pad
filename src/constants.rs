@@ -18,7 +18,7 @@ pub fn cipher_lines() -> Vec<&'static str> {
     vec![line_1, line_2, line_3, line_4, line_5, line_6, line_7, line_8]
 }
 
-pub fn common_4_letter_words() -> Vec<&'static str> {
+pub fn _common_4_letter_words() -> Vec<&'static str> {
     vec![
         "that",
         "this",
@@ -283,7 +283,7 @@ pub fn common_4_letter_words() -> Vec<&'static str> {
     ]
 }
 
-pub fn common_3_letter_words() -> Vec<&'static str> {
+pub fn _common_3_letter_words() -> Vec<&'static str> {
     vec![
         "the",
         "and",

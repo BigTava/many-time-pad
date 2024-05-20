@@ -1,4 +1,3 @@
-use std::fmt::Write;
 use std::str;
 use hex::{ decode, encode };
 use std::ops::BitXor;
